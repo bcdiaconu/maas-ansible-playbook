@@ -1,0 +1,18 @@
+---
+all:
+  children:
+    maas_postgres:
+      children:
+        maas_postgres_primary:
+          hosts:
+            inventory-test-2.iveronsoft.ro:
+        maas_postgres_secondary:
+    maas_proxy:
+      hosts:
+        inventory-test-2.iveronsoft.ro:
+    maas_region_controller:
+      hosts:
+        inventory-test-2.iveronsoft.ro:
+    maas_rack_controller:
+      hosts:
+        inventory-test-2.iveronsoft.ro:
