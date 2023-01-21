@@ -50,6 +50,7 @@
 - hosts: maas_region_controller
   roles:
     - role: maas_region_controller
+    - role: maas_configure
   become: true
   gather_facts: true
   tags:

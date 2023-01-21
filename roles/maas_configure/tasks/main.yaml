@@ -1,0 +1,9 @@
+---
+- name: Determine MAAS installation status
+  ansible.builtin.set_fact:
+    maas_installed: "{{ (maas_installation_type | lower == 'snap' and 'maas' in snaps_installed.stdout.split('\n') )
+                      or (maas_installation_type | lower == 'deb' and maas_package_name in ansible_facts.packages) }}"
+
+- name: Authenticate to MAAS
+  ansible.builtin.import_tasks: authenticate.yaml
+  when: (maas_installed)

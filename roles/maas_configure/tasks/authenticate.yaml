@@ -1,0 +1,20 @@
+---
+- name: gather API key
+  ansible.builtin.shell: "maas apikey --username='{{ admin_username }}' > 'api-key-file'"
+  become: true
+  register: result
+  changed_when: False
+  retries: 5
+  delay: 1
+  until: result is not failed
+
+- name: API login
+  ansible.builtin.shell: "maas login '{{ admin_username }}' '{{ maas_url }}' $(head -1 'api-key-file')"
+  become: true
+  no_log: true
+  register: result
+  changed_when: False
+  failed_when: '"You are now logged in to the MAAS server" not in result.stdout'
+  retries: 5
+  delay: 1
+  until: result is not failed
