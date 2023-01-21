@@ -1,0 +1,4 @@
+---
+- name: Set routes
+  ansible.builtin.import_tasks: set_routes.yaml
+  when: network_routes.interface

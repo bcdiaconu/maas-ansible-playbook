@@ -1,0 +1,22 @@
+---
+- name: Get netplan config file
+  ansible.builtin.slurp:
+    src: "/etc/netplan/50-cloud-init.yaml"
+  register: remote_content_encoded
+
+- name: Decode netplan config file
+  ansible.builtin.set_fact:
+    netplan_config_file_content: "{{ remote_content_encoded.content | b64decode | from_yaml }}"
+
+- name: Add routes to netplan
+  ansible.builtin.set_fact:
+    netplan_config_file_content: "{{ netplan_config_file_content | default({}) | combine({'network': {'ethernets': {network_routes.interface: {'routes': network_routes.routes}}}}, recursive=true) }}"
+
+- name: Update netplan config file
+  ansible.builtin.copy:
+    content: "{{ netplan_config_file_content | to_nice_yaml }}"
+    dest: "/etc/netplan/50-cloud-init.yaml"
+    backup: yes
+    mode: 0644
+    owner: root
+    group: root

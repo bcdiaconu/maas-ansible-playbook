@@ -60,6 +60,7 @@
 - hosts: maas_rack_controller
   roles:
     - role: maas_rack_controller
+    - role: maas_rack_controller_network_configure
   become: true
   gather_facts: true
   tags:

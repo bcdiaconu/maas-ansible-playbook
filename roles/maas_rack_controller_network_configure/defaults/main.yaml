@@ -1,0 +1,5 @@
+---
+network_routes:
+  interface: ""
+  routes: 
+    - {to: "", via: "", metric: 400}
