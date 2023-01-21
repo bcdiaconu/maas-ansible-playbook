@@ -7,3 +7,7 @@
 - name: Authenticate to MAAS
   ansible.builtin.import_tasks: authenticate.yaml
   when: (maas_installed)
+
+- name: Set MAAS network
+  ansible.builtin.import_tasks: set_network.yaml
+  when: (maas_installed)

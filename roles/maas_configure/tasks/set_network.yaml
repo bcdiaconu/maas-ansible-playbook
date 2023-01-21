@@ -1,0 +1,30 @@
+---
+- name: set upstream DNS
+  ansible.builtin.shell: "maas '{{ admin_username }}' maas set-config name=upstream_dns value='{{ network_dns }}'"
+  become: true
+  when: maas_authenticated and network_dns
+
+- name: generate ssh key pair
+  ansible.builtin.expect: 
+    command: bash -c "ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/ed25519"
+    responses: 
+      (?i)overwrite: "n"
+  become: true
+  register: register_generate_ssh_keys
+  changed_when: register_generate_ssh_keys.rc == 0
+  failed_when: 'register_generate_ssh_keys.rc != 0 and "already exists" not in register_generate_ssh_keys.stdout'
+
+- name: set ssh key permissions
+  ansible.builtin.shell: "chmod 600 ~/.ssh/ed25519 && chmod 644 ~/.ssh/ed25519.pub"
+  become: true
+  when: register_generate_ssh_keys.changed
+
+- name: add key to maas
+  ansible.builtin.shell: "maas '{{ admin_username }}' sshkeys create key=\"$(cat ~/.ssh/ed25519.pub)\""
+  become: true
+  when: register_generate_ssh_keys.changed
+  register: result
+  changed_when: result.rc == 0
+  retries: 5
+  delay: 1
+  until: result is not failed
