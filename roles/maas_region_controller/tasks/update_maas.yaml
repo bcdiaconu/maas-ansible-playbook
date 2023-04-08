@@ -1,23 +1,26 @@
 ---
 - name: Update MAAS - Snap
-  ansible.builtin.command: snap refresh --channel={{ maas_use_version }}/{{ maas_snap_channel }} maas
+  ansible.builtin.command: snap refresh --channel={{ maas_version }}/{{ maas_snap_channel }} maas
   when: maas_installation_type | lower == 'snap'
 
 - name: Add MAAS apt Repository
   ansible.builtin.apt_repository:
-    repo: "ppa:maas/{{ maas_use_version }}"
+    repo: "ppa:maas/{{ maas_version }}"
   when: maas_installation_type | lower == 'deb'
 
 - name: Update MAAS - Deb
   ansible.builtin.apt:
-    name: maas-region-api
+    name:
+      - "maas-region-api"
     state: latest
     update_cache: true
+    cache_valid_time: 3600
   when: maas_installation_type | lower == 'deb' and '"maas_rack_controller" not in group_names'
 
 - name: Migrate MAAS database
   ansible.builtin.command: "{{ 'maas' if maas_installation_type | lower == 'snap' else 'maas-region' }} migrate"
   changed_when: false
+  run_once: true
 
 - name: Refresh MAAS API
   ansible.builtin.command: "{{ 'maas' if maas_installation_type | lower == 'snap' else 'maas-region' }} refresh"

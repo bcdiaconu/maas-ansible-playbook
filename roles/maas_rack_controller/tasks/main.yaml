@@ -1,4 +1,11 @@
 ---
+# Playbook to generate a MAAS region
+- name: Verify MAAS Version supported on the host OS
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: maas_supported_os
+  when: maas_installation_type | lower != 'snap'
+
 - name: "Check MAAS Url supplied by user or region controller setup"
   ansible.builtin.fail:
     msg: "MAAS Url not found"
@@ -29,12 +36,6 @@
 - name: "Update MAAS rack controller"
   ansible.builtin.import_tasks: upgrade_maas.yaml
   when: (maas_installed)
-
-- name: Install metrics
-  ansible.builtin.include_role:
-    name: common
-    tasks_from: metrics
-  when: install_metrics is defined and install_metrics
 
 - name: "Setup firewall"
   ansible.builtin.include_role:
