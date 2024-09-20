@@ -191,10 +191,8 @@ The following variables are only required when using HA Postgres:
 
 ### Deploy the MAAS stack
 
-```
-ansible-playbook -i ./hosts\
-    --extra-vars="maas_version=3.2 maas_postgres_password=example maas_installation_type=deb maas_url=http://example.com:5240/MAAS"\
-    ./site.yaml
+```bash
+ansible-playbook -i ./hosts.yaml --extra-vars="maas_version=3.5 maas_postgres_password=example maas_installation_type=deb maas_url=http://maas-server.iveronsoft.ro:5240/MAAS" ./site.yaml
 ```
 
 ### Deploy the MAAS stack with Observability enabled
