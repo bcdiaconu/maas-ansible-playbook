@@ -189,10 +189,40 @@ The following variables are only required when using HA Postgres:
 
 - **maas_postgres_floating_ip_prefix_len**: The prefix length of the subnet within your network that the floating IP is within.
 
+### Create multipass machine
+
+1. Update the public key for ssh connection in cloud init file `cloud-init-maas-controller.yaml`.
+
+1. Get the list of networks:
+
+    ```powershell
+    Get-NetAdapter
+    ```
+
+1. Create new external switch. Make sure to replace the Network Adapter Name with one discovered in previous step:
+
+    ```powershell
+    New-VMSwitch -name HvExternal  -NetAdapterName Ethernet -AllowManagementOS $true
+    ```
+
+    Enable Host access to external switch and probably also internet by allowing management os access to it using flag `-AllowManagementOS $true`.
+
+1. Create bridge over previously created external switch
+
+    ```powershell
+    multipass set local.bridged-network="$(Get-HNSNetwork | ? Name -Like '*extern*' | Select-Object -ExpandProperty Name)"
+    ```
+
+1. Deploy and launch an Ubuntu virtual machine using multipass
+
+    ```powershell
+    multipass launch -c 2 -m 3G -d 10G --network name=bridged,mac=52:54:00:a6:37:84 -n maas-controller --cloud-init ./cloud-init-maas-controller.yml
+    ```
+
 ### Deploy the MAAS stack
 
 ```bash
-ansible-playbook -i ./hosts.yaml --extra-vars="maas_version=3.5 maas_postgres_password=example maas_installation_type=deb maas_url=http://maas-server.iveronsoft.ro:5240/MAAS" ./site.yaml
+ansible-playbook -i ./hosts.yaml --extra-vars="maas_version=3.5 maas_postgres_password=example maas_installation_type=deb maas_url=http://maas-controller.iveronsoft.ro:5240/MAAS" ./site.yaml
 ```
 
 ### Deploy the MAAS stack with Observability enabled
