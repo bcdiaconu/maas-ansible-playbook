@@ -1,0 +1,7 @@
+package_update: true
+package_upgrade: true
+
+users:
+  - default:
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdNWLQ7qAARoSjdHXW5ZXP0EtWfbIbpjVslDVAppdq7 ubuntu@multipass.maas-server"

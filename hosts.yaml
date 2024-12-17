@@ -2,10 +2,16 @@
 all:
   children:
     maas_postgres:
+      hosts:
+        maas-server
     maas_pacemaker:
       children:
         maas_corosync:
     maas_postgres_proxy:
     maas_proxy:
     maas_region_controller:
+      hosts:
+        maas-server
     maas_rack_controller:
+      hosts:
+        maas-server

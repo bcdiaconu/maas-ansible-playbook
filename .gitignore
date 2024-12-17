@@ -1,3 +1,4 @@
 *.swp
 /maas-*-alert-rules
 /*-alert-rules.yml
+.vscode/
